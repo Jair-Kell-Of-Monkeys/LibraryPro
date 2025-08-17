@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}{{ member.first_name }} {{ member.last_name }}{% endblock %}
+{% block content %}
+<h3 class="mb-3">{{ member.first_name }} {{ member.last_name }}</h3>
+<ul class="list-group mb-3">
+  <li class="list-group-item"><strong>Email:</strong> {{ member.email }}</li>
+  <li class="list-group-item"><strong>Teléfono:</strong> {{ member.phone }}</li>
+  <li class="list-group-item"><strong>Dirección:</strong> {{ member.address }}</li>
+</ul>
+<a class="btn btn-primary" href="{% url 'accounts:member_update' member.pk %}">Editar</a>
+<a class="btn btn-outline-secondary" href="{% url 'accounts:member_list' %}">Volver</a>
+{% endblock %}

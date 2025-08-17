@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block title %}Libros{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h3 class="mb-0">Libros</h3>
+  <a class="btn btn-success" href="{% url 'catalog:book_create' %}">Nuevo libro</a>
+</div>
+
+<table class="table table-striped align-middle">
+  <thead>
+    <tr>
+      <th class="text-muted">#</th>
+      <th>Título</th>
+      <th>Autor</th>
+      <th>Categoría</th>
+      <th>Disponibles</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for b in books %}
+      <tr>
+        <td class="text-muted">
+          {% if is_paginated %}
+            {{ forloop.counter0|add:page_obj.start_index }}
+          {% else %}
+            {{ forloop.counter }}
+          {% endif %}
+        </td>
+        <td><a href="{% url 'catalog:book_detail' b.pk %}">{{ b.title }}</a></td>
+        <td>{{ b.author }}</td>
+        <td>{{ b.category }}</td>
+        <td>{{ b.copies_available }}</td>
+        <td class="text-end">
+          <a class="btn btn-sm btn-outline-primary" href="{% url 'catalog:book_update' b.pk %}">Editar</a>
+          <a class="btn btn-sm btn-outline-danger" href="{% url 'catalog:book_delete' b.pk %}">Eliminar</a>
+        </td>
+      </tr>
+    {% empty %}
+      <tr><td colspan="6" class="text-center text-muted">Sin registros</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+{% if is_paginated %}
+<nav>
+  <ul class="pagination">
+    {% if page_obj.has_previous %}
+      <li class="page-item"><a class="page-link" href="?page=1">«</a></li>
+      <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">‹</a></li>
+    {% endif %}
+    <li class="page-item disabled"><a class="page-link">Página {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</a></li>
+    {% if page_obj.has_next %}
+      <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">›</a></li>
+      <li class="page-item"><a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">»</a></li>
+    {% endif %}
+  </ul>
+</nav>
+{% endif %}
+{% endblock %}

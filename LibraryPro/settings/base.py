@@ -1,15 +1,12 @@
+# LibraryPro/settings/base.py
 from pathlib import Path
-import os
-import environ
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
-env = environ.Env()
 
-environ.Env.read_env(os.path.join(BASE_DIR, ".env"))
+SECRET_KEY = "change-me-in-production"
+DEBUG = False
 
-SECRET_KEY = env("SECRET_KEY", default="insecure-secret-key")
-DEBUG = env.bool("DEBUG", default=True)
-ALLOWED_HOSTS = [h.strip() for h in env("ALLOWED_HOSTS", default="127.0.0.1,localhost").split(",")]
+ALLOWED_HOSTS: list[str] = []
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -18,16 +15,16 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "rest_framework",
-    "apps.accounts",
+
+    # Nuestras apps
     "apps.catalog",
+    "apps.accounts",
     "apps.loans",
     "apps.reports",
 ]
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
-    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -41,11 +38,10 @@ ROOT_URLCONF = "LibraryPro.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [BASE_DIR / "templates"],
+        "DIRS": [BASE_DIR / "templates"],  # <— muy importante
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
-                "django.template.context_processors.debug",
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
@@ -55,38 +51,32 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "LibraryPro.wsgi.application"
-ASGI_APPLICATION = "LibraryPro.asgi.application"
 
+# DB por defecto: SQLite (en dev puedes usar Postgres vía DATABASE_URL en otro settings)
 DATABASES = {
-    "default": env.db("DATABASE_URL", default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}")
+    "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": BASE_DIR / "db.sqlite3",
+    }
 }
 
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
-    {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator", "OPTIONS": {"min_length": 8}},
+    {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},
     {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator"},
     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
 ]
 
-LANGUAGE_CODE = env("LANGUAGE_CODE", default="es-mx")
-TIME_ZONE = env("TIME_ZONE", default="America/Mexico_City")
+LANGUAGE_CODE = "es-mx"
+TIME_ZONE = "America/Mexico_City"
 USE_I18N = True
-USE_L10N = True
 USE_TZ = True
 
 STATIC_URL = "/static/"
-STATIC_ROOT = env("STATIC_ROOT", default=str(BASE_DIR / ".staticfiles"))
-STATICFILES_DIRS = [BASE_DIR / "static"]
-STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
-MEDIA_URL = "/media/"
-MEDIA_ROOT = BASE_DIR / "media"
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-LOGIN_REDIRECT_URL = "home"
-LOGOUT_REDIRECT_URL = "home"
+# Auth redirects
 LOGIN_URL = "login"
-
-REST_FRAMEWORK = {
-    "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.IsAuthenticatedOrReadOnly"],
-    "DEFAULT_AUTHENTICATION_CLASSES": ["rest_framework.authentication.SessionAuthentication"],
-}
+LOGIN_REDIRECT_URL = "home"
+LOGOUT_REDIRECT_URL = "login"

@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}{{ book.title }}{% endblock %}
+{% block content %}
+<h3 class="mb-3">{{ book.title }}</h3>
+<ul class="list-group mb-3">
+  <li class="list-group-item"><strong>Autor:</strong> {{ book.author }}</li>
+  <li class="list-group-item"><strong>Categoría:</strong> {{ book.category }}</li>
+  <li class="list-group-item"><strong>ISBN:</strong> {{ book.isbn }}</li>
+  <li class="list-group-item"><strong>Publicación:</strong> {{ book.published_date }}</li>
+  <li class="list-group-item"><strong>Copias:</strong> {{ book.copies_available }} / {{ book.copies_total }}</li>
+  <li class="list-group-item"><strong>Descripción:</strong><br>{{ book.description|linebreaks }}</li>
+</ul>
+<a class="btn btn-primary" href="{% url 'catalog:book_update' book.pk %}">Editar</a>
+<a class="btn btn-outline-secondary" href="{% url 'catalog:book_list' %}">Volver</a>
+{% endblock %}

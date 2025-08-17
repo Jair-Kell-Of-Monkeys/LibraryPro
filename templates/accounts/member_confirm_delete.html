@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}Eliminar miembro{% endblock %}
+{% block content %}
+<h3 class="mb-3">Eliminar miembro</h3>
+<p>¿Confirmas eliminar <strong>{{ object }}</strong>?</p>
+<form method="post">{% csrf_token %}
+  <button class="btn btn-danger" type="submit">Sí, eliminar</button>
+  <a class="btn btn-outline-secondary" href="{% url 'accounts:member_list' %}">Cancelar</a>
+</form>
+{% endblock %}
